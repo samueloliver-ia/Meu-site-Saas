@@ -664,6 +664,156 @@
         justify-content: center
       }
     }
+    /* CHATBOT */
+    .chatbot-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--red);
+      color: #050B18;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      cursor: pointer;
+      box-shadow: 0 8px 32px rgba(0, 247, 255, 0.4);
+      z-index: 1000;
+      transition: 0.3s;
+    }
+    .chatbot-btn:hover {
+      transform: scale(1.1) translateY(-4px);
+    }
+    .chatbot-window {
+      position: fixed;
+      bottom: 96px;
+      right: 24px;
+      width: 350px;
+      max-width: calc(100vw - 48px);
+      background: rgba(5, 11, 24, 0.96);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transform-origin: bottom right;
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    .chatbot-window.open {
+      display: flex;
+      transform: scale(1);
+      opacity: 1;
+    }
+    .chatbot-header {
+      background: rgba(0, 247, 255, 0.1);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .chatbot-header-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--red);
+      color: #050B18;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 800;
+      box-shadow: 0 0 15px rgba(0,247,255,0.3);
+    }
+    .chatbot-header-text h4 {
+      font-size: 15px;
+      color: #fff;
+    }
+    .chatbot-header-text p {
+      font-size: 11px;
+      color: var(--green);
+      margin-top: 2px;
+    }
+    .chatbot-body {
+      padding: 20px;
+      height: 320px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+    .chat-msg {
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      max-width: 88%;
+      animation: fadeInBot 0.3s ease;
+    }
+    @keyframes fadeInBot { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .chat-msg.bot {
+      background: var(--glass);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .chat-msg.user {
+      background: var(--red);
+      color: #050B18;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      font-weight: 600;
+    }
+    .chatbot-input {
+      padding: 16px;
+      background: rgba(5, 11, 24, 0.9);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+    }
+    .chatbot-input input {
+      flex: 1;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 20px;
+      outline: none;
+      font-size: 13px;
+      font-family: var(--font);
+      transition: 0.2s;
+    }
+    .chatbot-input input:focus {
+      border-color: rgba(0,247,255,0.5);
+      background: rgba(255,255,255,0.06);
+    }
+    .chatbot-input button {
+      background: var(--red);
+      color: #050B18;
+      border: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+      font-size: 16px;
+    }
+    .chatbot-input button:hover {
+      transform: scale(1.08);
+      box-shadow: 0 4px 12px rgba(0,247,255,0.3);
+    }
   </style>
 </head>
 
@@ -863,6 +1013,26 @@
     </div>
   </section>
 
+  <!-- CHATBOT INTERFACE -->
+  <div class="chatbot-btn" id="chatbot-btn" aria-label="Falar com IA">🤖</div>
+  <div class="chatbot-window" id="chatbot-window">
+    <div class="chatbot-header">
+      <div class="chatbot-header-icon">IA</div>
+      <div class="chatbot-header-text">
+        <h4>Assistente Samuel</h4>
+        <p>● Online agora</p>
+      </div>
+      <button id="chatbot-close" style="margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;transition:0.2s;">✕</button>
+    </div>
+    <div class="chatbot-body" id="chatbot-body">
+      <!-- As mensagens entram aqui via JS -->
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="chatbot-input-field" placeholder="Digite aqui..." autocomplete="off" />
+      <button id="chatbot-send">➜</button>
+    </div>
+  </div>
+
   <footer>
     <p>© 2025 <span>Samuel Oliver</span> • Sistemas SaaS com IA • Todos os direitos reservados</p>
   </footer>
@@ -925,6 +1095,85 @@
       const links = document.querySelector('.nav-links');
       const cta = document.querySelector('.nav-cta');
       if (links) { links.style.display = links.style.display === 'flex' ? 'none' : 'flex'; links.style.flexDirection = 'column'; links.style.position = 'absolute'; links.style.top = '64px'; links.style.right = '20px'; links.style.background = 'rgba(5,11,24,0.97)'; links.style.borderRadius = '16px'; links.style.padding = '16px'; links.style.border = '1px solid rgba(255,255,255,0.08)'; }
+    });
+    // CHATBOT LOGIC
+    const chatBtn = document.getElementById('chatbot-btn');
+    const chatWindow = document.getElementById('chatbot-window');
+    const chatClose = document.getElementById('chatbot-close');
+    const chatBody = document.getElementById('chatbot-body');
+    const chatInput = document.getElementById('chatbot-input-field');
+    const chatSend = document.getElementById('chatbot-send');
+
+    let chatStep = 0;
+    let userData = { type: '', details: '' };
+
+    const qaFlow = [
+      "Olá! 👋 Sou a Inteligência Artificial do Samuel.<br><br>Para agilizarmos, <strong>qual tipo de sistema ou projeto você precisa criar?</strong> (ex: Plataforma Web, Delivery, App, Landing Page...)",
+      "Entendido! 🚀<br><br>E me fala um pouco sobre <strong>como você quer que ele funcione?</strong> Quais as principais funcionalidades e se tem algum prazo ou ideia específica?",
+      "Perfeito! Estou redirecionando você agora mesmo para o WhatsApp do Samuel com esse resumo pronto. Um momento... 💬"
+    ];
+
+    function addMessage(text, sender) {
+      const div = document.createElement('div');
+      div.className = `chat-msg ${sender}`;
+      div.innerHTML = text;
+      chatBody.appendChild(div);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function botTyping(text, delay = 600) {
+      // Cria a bolinha de digitando temporária (opcional, manteremos simples)
+      setTimeout(() => {
+        addMessage(text, 'bot');
+      }, delay);
+    }
+
+    chatBtn.addEventListener('click', () => {
+      chatWindow.classList.add('open');
+      if (chatStep === 0) {
+        chatStep = 1;
+        botTyping(qaFlow[0], 500);
+      }
+    });
+
+    chatClose.addEventListener('click', () => {
+      chatWindow.classList.remove('open');
+      // Reduz um pouco o botão ou anima se quiser
+    });
+
+    function handleSend() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      addMessage(text, 'user');
+      chatInput.value = '';
+
+      if (chatStep === 1) {
+        userData.type = text;
+        chatStep = 2;
+        botTyping(qaFlow[1], 800);
+      } else if (chatStep === 2) {
+        userData.details = text;
+        chatStep = 3;
+        botTyping(qaFlow[2], 900);
+        
+        setTimeout(() => {
+          const textToWpp = `Olá Samuel, vim pelo Agente IA do seu site e gostaria de conversar sobre um projeto!\n\n*Tipo de projeto:* ${userData.type}\n*Detalhes do funcionamento:* ${userData.details}`;
+          const wppUrl = `https://wa.me/5562981991595?text=${encodeURIComponent(textToWpp)}`;
+          
+          addMessage(`<a href="${wppUrl}" target="_blank" style="display:inline-block;background:var(--red);color:#050B18;padding:10px 18px;border-radius:24px;text-decoration:none;font-weight:700;margin-top:6px;font-size:14px;box-shadow: 0 4px 15px rgba(0, 247, 255, 0.4);">Abrir WhatsApp agora</a>`, 'bot');
+          
+          // Opcional: abre direto a janela tbm
+          setTimeout(() => window.open(wppUrl, '_blank'), 1500);
+        }, 1800);
+        
+        chatInput.disabled = true;
+      }
+    }
+
+    chatSend.addEventListener('click', handleSend);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleSend();
     });
   </script>
 </body>
